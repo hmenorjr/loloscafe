@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="sv" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lolo's Seaside Café & Restaurant | Geta, Åland</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..800;1,400..800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: {
+              DEFAULT: '#0F1C24',
+              card: '#16242F',
+              light: '#1E303D',
+              deep: '#0A131A'
+            },
+            brass: {
+              DEFAULT: '#CFA162',
+              light: '#E2B879',
+              dark: '#B08346'
+            },
+            mist: {
+              DEFAULT: '#F9F7F2',
+              card: '#FFFFFF',
+              dark: '#EFECE6'
+            }
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'Georgia', 'serif'],
+            sans: ['Plus Jakarta Sans', 'system-ui', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0F1C24;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CFA162;
+      border-radius: 4px;
+    }
+
+    /* Glassmorphism */
+    .glass-dark {
+      background: rgba(15, 28, 36, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(207, 161, 98, 0.15);
+    }
+
+    /* Scroll Reveal Animations */
+    .reveal-element {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .reveal-element.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Pulsing Status Dot */
+    @keyframes pulse-ring {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.3); opacity: 0.2; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+    .pulse-dot-ring {
+      animation: pulse-ring 2s infinite ease-in-out;
+    }
+
+    /* Wave Gradient Background */
+    .sea-gradient {
+      background: linear-gradient(180deg, #0A131A 0%, #0F1C24 40%, #16242F 100%);
+    }
+  </style>
+</head>
+<body class="bg-mist text-gray-800 font-sans antialiased selection:bg-brass selection:text-navy min-h-screen flex flex-col">
+
+  <div id="liveStatusBanner" class="bg-navy-deep text-white text-xs sm:text-sm border-b border-brass/20 py-2.5 px-4 transition-all duration-300 relative z-50">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+      <div class="flex items-center gap-3">
+        <!-- Live Status Indicator Pill -->
+        <div id="statusPill" class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wide bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+          <span class="relative flex h-2 w-2">
+            <span id="statusPing" class="pulse-dot-ring absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span id="statusDot" class="relative inline-flex rounded-full h-2 w-2 bg-emerald-400"></span>
+          </span>
+          <span id="statusText">ÖPPET NU</span>
+        </div>
+        <span id="statusSubtext" class="text-gray-300 font-medium">Idag öppet 11:00 – 19:00 • Köket stänger 18:30</span>
+      </div>
+
+      <div class="flex items-center gap-4 text-xs text-brass-light font-medium">
+        <span class="hidden md:inline-flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-brass" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <span data-i18n="locationSummary">Snäckö, Geta • Åland</span>
+        </span>
+        <button onclick="toggleDemoStatus()" class="hover:underline text-gray-400 hover:text-white transition text-[11px] flex items-center gap-1">
+          ⚙️ <span data-i18n="demoToggle">Testa Öppet/Stängt vy</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <header class="sticky top-0 z-40 glass-dark">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 rounded-lg bg-brass/10 border border-brass/40 flex items-center justify-center text-brass group-hover:bg-brass group-hover:text-navy transition-all duration-300">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="font-serif text-xl sm:text-2xl tracking-wide font-bold text-white block leading-none">
+            LOLO'S <span class="text-brass italic font-normal">Seaside</span>
+          </span>
+          <span class="text-[10px] tracking-widest text-gray-400 uppercase font-semibold">CAFÉ & RESTAURANT</span>
+        </div>
+      </a>
+
+      <!-- Desktop Navigation Links -->
+      <nav class="hidden lg:flex items-center space-x-8 text-sm font-medium text-gray-200">
+        <a href="#about" class="hover:text-brass transition-colors" data-i18n="navAbout">Om Oss</a>
+        <a href="#menu" class="hover:text-brass transition-colors" data-i18n="navMenu">Meny</a>
+        <a href="#snacko" class="hover:text-brass transition-colors" data-i18n="navSnacko">Snäckö Frukt</a>
+        <a href="#marina" class="hover:text-brass transition-colors" data-i18n="navMarina">Gästbrygga</a>
+        <a href="#contact" class="hover:text-brass transition-colors" data-i18n="navContact">Kontakt</a>
+      </nav>
+
+      <!-- Right Action Items: Language Switcher & Direct Google Form Booking CTA -->
+      <div class="hidden sm:flex items-center space-x-4">
+        
+        <!-- Language Switcher Pill -->
+        <div class="bg-navy-light/80 p-1 rounded-full border border-brass/30 flex items-center">
+          <button id="langSV" onclick="switchLanguage('sv')" class="px-3 py-1 text-xs font-semibold rounded-full transition-all duration-300 bg-brass text-navy shadow-sm">
+            SV
+          </button>
+          <button id="langFI" onclick="switchLanguage('fi')" class="px-3 py-1 text-xs font-semibold rounded-full transition-all duration-300 text-gray-300 hover:text-white">
+            FI
+          </button>
+        </div>
+
+        <!-- Book Table CTA Button (Direct Google Form External Link) -->
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSc_EXAMPLE_LOLOS_RESERVATION/viewform" target="_blank" rel="noopener noreferrer" onclick="openBookingForm(event)" class="bg-brass hover:bg-brass-light text-navy font-semibold px-5 py-2.5 rounded-lg text-sm transition-all duration-300 shadow-lg hover:shadow-brass/20 flex items-center gap-2 transform hover:-translate-y-0.5">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+          </svg>
+          <span data-i18n="btnBookTable">Boka Bord</span>
+          <svg class="w-3.5 h-3.5 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+        </a>
+      </div>
+
+      <!-- Mobile Hamburger Button -->
+      <button onclick="toggleMobileMenu()" class="lg:hidden p-2 rounded-md text-gray-300 hover:text-white hover:bg-navy-light focus:outline-none">
+        <svg id="hamburgerIcon" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    <div id="mobileDrawer" class="hidden lg:hidden bg-navy border-b border-brass/20 px-4 pt-2 pb-6 space-y-3">
+      <a href="#about" onclick="toggleMobileMenu()" class="block text-gray-200 hover:text-brass py-2 font-medium" data-i18n="navAbout">Om Oss</a>
+      <a href="#menu" onclick="toggleMobileMenu()" class="block text-gray-200 hover:text-brass py-2 font-medium" data-i18n="navMenu">Meny</a>
+      <a href="#snacko" onclick="toggleMobileMenu()" class="block text-gray-200 hover:text-brass py-2 font-medium" data-i18n="navSnacko">Snäckö Frukt</a>
+      <a href="#marina" onclick="toggleMobileMenu()" class="block text-gray-200 hover:text-brass py-2 font-medium" data-i18n="navMarina">Gästbrygga</a>
+      <a href="#contact" onclick="toggleMobileMenu()" class="block text-gray-200 hover:text-brass py-2 font-medium" data-i18n="navContact">Kontakt</a>
+      
+      <div class="pt-4 border-t border-navy-light flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xs text-gray-400 font-medium" data-i18n="languageLabel">Språk:</span>
+          <button onclick="switchLanguage('sv')" class="px-3 py-1 text-xs font-semibold rounded-md bg-brass text-navy">SV</button>
+          <button onclick="switchLanguage('fi')" class="px-3 py-1 text-xs font-semibold rounded-md bg-navy-light text-white">FI</button>
+        </div>
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSc_EXAMPLE_LOLOS_RESERVATION/viewform" target="_blank" rel="noopener noreferrer" onclick="toggleMobileMenu(); openBookingForm(event);" class="bg-brass text-navy font-semibold px-4 py-2 rounded-md text-xs shadow inline-flex items-center gap-1">
+          <span data-i18n="btnBookTable">Boka Bord</span> ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="relative sea-gradient text-white min-h-[90vh] flex items-center overflow-hidden py-20">
+    
+    <!-- Decorative Ambient Glows & Waves -->
+    <div class="absolute inset-0 opacity-20 bg-[radial-gradient(#CFA162_1px,transparent_1px)] [background-size:24px_24px]"></div>
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-brass/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      
+      <!-- Hero Content Column -->
+      <div class="lg:col-span-7 space-y-8 text-center lg:text-left reveal-element">
+        
+        <!-- Location Pill -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brass/15 border border-brass/40 text-brass text-xs font-semibold tracking-wider uppercase">
+          <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/></svg>
+          <span data-i18n="heroBadge">Snäckö • Geta, Ålands Skärgård</span>
+        </div>
+
+        <!-- Headline -->
+        <h1 class="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold leading-tight text-white tracking-tight">
+          <span data-i18n="heroTitleLine1">En flytande oas</span><br/>
+          <span class="text-brass italic font-normal" data-i18n="heroTitleLine2">mitt på havet</span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-gray-300 text-lg sm:text-xl max-w-2xl font-light leading-relaxed mx-auto lg:mx-0" data-i18n="heroSubtitle">
+          Avnjut lokalt åländskt mathantverk, nypressad äppelmust från Snäckö Frukt och doften av salt hav – serverat direkt på vår flytande bryggterrass.
+        </p>
+
+        <!-- CTA Action Buttons -->
+        <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 pt-2">
+          <a href="https://docs.google.com/forms/d/e/1FAIpQLSc_EXAMPLE_LOLOS_RESERVATION/viewform" target="_blank" rel="noopener noreferrer" onclick="openBookingForm(event)" class="w-full sm:w-auto bg-brass hover:bg-brass-light text-navy font-bold px-8 py-4 rounded-xl text-base transition-all duration-300 shadow-xl shadow-brass/10 hover:shadow-brass/20 flex items-center justify-center gap-3 group transform hover:-translate-y-1">
+            <span data-i18n="heroCtaBook">Boka Bord (Google Form)</span>
+            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+          </a>
+          
+          <a href="#menu" class="w-full sm:w-auto bg-navy-card/80 hover:bg-navy-light text-white border border-gray-700 hover:border-brass/50 font-medium px-7 py-4 rounded-xl text-base transition-all duration-300 flex items-center justify-center gap-2 backdrop-blur-sm">
+            <span data-i18n="heroCtaMenu">Utforska Menyn</span>
+          </a>
+        </div>
+
+        <!-- Quick Value Highlights -->
+        <div class="grid grid-cols-3 gap-4 pt-8 border-t border-navy-light/60 max-w-lg mx-auto lg:mx-0 text-left">
+          <div>
+            <div class="text-brass font-bold text-xl sm:text-2xl font-serif">100%</div>
+            <div class="text-xs text-gray-400" data-i18n="stat1">Åländskt Mathantverk</div>
+          </div>
+          <div>
+            <div class="text-brass font-bold text-xl sm:text-2xl font-serif">15+</div>
+            <div class="text-xs text-gray-400" data-i18n="stat2">Båtplatser i Gästbryggan</div>
+          </div>
+          <div>
+            <div class="text-brass font-bold text-xl sm:text-2xl font-serif">0 m</div>
+            <div class="text-xs text-gray-400" data-i18n="stat3">Avstånd till Vattnet</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="lg:col-span-5 reveal-element">
+        <div class="relative mx-auto max-w-md lg:max-w-none">
+          
+          <!-- Outer Decorative Frame -->
+          <div class="absolute -inset-1.5 bg-gradient-to-r from-brass via-brass-light to-navy-light rounded-2xl blur opacity-30"></div>
+          
+          <div class="relative bg-navy-card rounded-2xl overflow-hidden border border-brass/30 shadow-2xl">
+            <!-- Mock Visual Banner representing Floating Deck & Café -->
+            <div class="h-64 sm:h-72 bg-gradient-to-br from-blue-900 to-navy-deep relative flex items-end p-6 overflow-hidden">
+              <div class="absolute inset-0 opacity-40 mix-blend-overlay bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1000&q=80');"></div>
+              <div class="absolute inset-0 bg-gradient-to-t from-navy-card via-transparent to-transparent"></div>
+              
+              <div class="relative z-10 space-y-1">
+                <span class="bg-brass text-navy text-[11px] font-bold px-2.5 py-0.5 rounded tracking-wide uppercase" data-i18n="cardBadge">Signaturrätt</span>
+                <h3 class="font-serif text-2xl font-bold text-white" data-i18n="cardTitle">Ålandspannkaka på Däck</h3>
+                <p class="text-xs text-gray-300" data-i18n="cardSub">Med hemkokt hallon-lakritsmarmelad & färsk vispgrädde</p>
+              </div>
+            </div>
+
+            <!-- Card Bottom Live Dock Details -->
+            <div class="p-6 space-y-4">
+              <div class="flex items-center justify-between text-xs text-gray-300 pb-3 border-b border-navy-light">
+                <span class="flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+                  <span data-i18n="dockStatus">Besöksbrygga Öppen</span>
+                </span>
+                <span class="text-brass font-medium" data-i18n="waterDepth">Djup: 2.5m</span>
+              </div>
+              
+              <p class="text-xs text-gray-400 italic leading-relaxed" data-i18n="heroCardQuote">
+                "Vår restaurang vilar direkt på vågorna. Här njuter du av doften från äppelodlingarna och den svala skärgårdsbrisen."
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="about" class="py-24 bg-mist text-navy relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16 space-y-3 reveal-element">
+        <span class="text-brass-dark text-xs font-bold tracking-widest uppercase" data-i18n="aboutSub">Upplev Lolo's</span>
+        <h2 class="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-navy" data-i18n="aboutTitle">
+          Vilar på vattnet vid Snäckö Sund
+        </h2>
+        <div class="w-16 h-1 bg-brass mx-auto rounded-full"></div>
+        <p class="text-gray-600 text-base sm:text-lg pt-2" data-i18n="aboutDesc">
+          Lolo’s Seaside Café & Restaurant erbjuder en unik kombination av genuint åländskt mathantverk, avslappnad atmosfär och en oslagbar placering direkt på havet i Geta.
+        </p>
+      </div>
+
+      <!-- 3 Pillar Feature Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <!-- Pillar 1 -->
+        <div class="bg-white rounded-2xl p-8 shadow-sm border border-mist-dark hover:shadow-xl transition-all duration-300 space-y-4 reveal-element group">
+          <div class="w-14 h-14 rounded-xl bg-brass/10 text-brass flex items-center justify-center text-2xl group-hover:bg-brass group-hover:text-navy transition-colors">
+            🌊
+          </div>
+          <h3 class="font-serif text-2xl font-bold text-navy" data-i18n="pillar1Title">Flytande Servering</h3>
+          <p class="text-gray-600 text-sm leading-relaxed" data-i18n="pillar1Desc">
+            Sitt utomhus på vår rymliga däckterrass eller inne i inglasade salongen. Se båtarna lägga till samtidigt som du njuter av skärgårdens lugn.
+          </p>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div class="bg-white rounded-2xl p-8 shadow-sm border border-mist-dark hover:shadow-xl transition-all duration-300 space-y-4 reveal-element group">
+          <div class="w-14 h-14 rounded-xl bg-brass/10 text-brass flex items-center justify-center text-2xl group-hover:bg-brass group-hover:text-navy transition-colors">
+            🍎
+          </div>
+          <h3 class="font-serif text-2xl font-bold text-navy" data-i18n="pillar2Title">Snäckö Frukt Samarbete</h3>
+          <p class="text-gray-600 text-sm leading-relaxed" data-i18n="pillar2Desc">
+            I direkt anslutning till äppelodlingarna serverar vi sortren kallpressad äppelmust, hemgjorda chutneyer och lokala delikatesser.
+          </p>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div class="bg-white rounded-2xl p-8 shadow-sm border border-mist-dark hover:shadow-xl transition-all duration-300 space-y-4 reveal-element group">
+          <div class="w-14 h-14 rounded-xl bg-brass/10 text-brass flex items-center justify-center text-2xl group-hover:bg-brass group-hover:text-navy transition-colors">
+            ⚓
+          </div>
+          <h3 class="font-serif text-2xl font-bold text-navy" data-i18n="pillar3Title">Egen Gästbrygga</h3>
+          <p class="text-gray-600 text-sm leading-relaxed" data-i18n="pillar3Desc">
+            Kommer du med båt? Vi har fri tilläggning för caférestaurangens gäster med gott om plats för både mindre båtar och segelbåtar.
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section id="menu" class="py-24 bg-navy text-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-12 space-y-3 reveal-element">
+        <span class="text-brass text-xs font-bold tracking-widest uppercase" data-i18n="menuSub">Smaker Från Skärgården</span>
+        <h2 class="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-white" data-i18n="menuTitle">
+          Lolo's Meny & Delikatesser
+        </h2>
+        <p class="text-gray-400 text-base" data-i18n="menuDesc">
+          Noggrant utvalda råvaror tillagade med omsorg. Alla rätter tillagas från grunden med lokala åländska smaknoter.
+        </p>
+      </div>
+
+      <!-- Menu Category Filter Tabs -->
+      <div class="flex flex-wrap justify-center gap-2 sm:gap-4 mb-12 reveal-element">
+        <button onclick="filterMenu('all')" id="tab-all" class="menu-tab-btn active px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-brass text-navy shadow-md">
+          <span data-i18n="catAll">Alla Rätter</span>
+        </button>
+        <button onclick="filterMenu('dishes')" id="tab-dishes" class="menu-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-navy-card text-gray-300 hover:text-white border border-gray-800">
+          <span data-i18n="catDishes">Mat & Skärgårdsrätter</span>
+        </button>
+        <button onclick="filterMenu('drinks')" id="tab-drinks" class="menu-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-navy-card text-gray-300 hover:text-white border border-gray-800">
+          <span data-i18n="catDrinks">Snäckö Must & Dryck</span>
+        </button>
+        <button onclick="filterMenu('dessert')" id="tab-dessert" class="menu-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-navy-card text-gray-300 hover:text-white border border-gray-800">
+          <span data-i18n="catDesserts">Fika & Ålandspannkaka</span>
+        </button>
+      </div>
+
+      <!-- Filterable Menu Grid -->
+      <div id="menuGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Dynamically rendered via JS based on language and filter -->
+      </div>
+
+      <div class="text-center mt-12 text-xs text-gray-400 italic reveal-element" data-i18n="menuNote">
+        * Allergier eller specialkost? Meddela gärna i din bordsbokning via formuläret.
+      </div>
+
+    </div>
+  </section>
+
+  <section id="snacko" class="py-20 bg-mist-dark text-navy">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-white rounded-3xl p-8 sm:p-12 shadow-xl border border-mist border-opacity-60 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center reveal-element">
+        
+        <div class="lg:col-span-7 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-emerald-100 text-emerald-800 text-xs font-bold uppercase tracking-wider">
+            🍎 <span data-i18n="snackoBadge">Lokalt Odlat På Snäckö</span>
+          </div>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-navy" data-i18n="snackoTitle">
+            Från Äppelodling Till Glas & Tallrik
+          </h2>
+          <p class="text-gray-600 text-base leading-relaxed" data-i18n="snackoText">
+            Mitt emot caféet breder Snäckö Frukts äppelodlingar ut sig. Här växer solmogna åländska äpplen som pressas till vår populära sortrena muster. Prova även våra hemgjorda chutneyer och sylter som finns till försäljning i caféets lilla gårdsbutikshörna.
+          </p>
+
+          <div class="grid grid-cols-2 gap-4 pt-2">
+            <div class="p-4 rounded-xl bg-mist flex items-start gap-3">
+              <span class="text-xl">🥤</span>
+              <div>
+                <h4 class="font-bold text-sm text-navy" data-i18n="snackoItem1Title">Sortren Äppelmust</h4>
+                <p class="text-xs text-gray-500" data-i18n="snackoItem1Desc">Kallpressad utan tillsatt socker</p>
+              </div>
+            </div>
+            <div class="p-4 rounded-xl bg-mist flex items-start gap-3">
+              <span class="text-xl">🍯</span>
+              <div>
+                <h4 class="font-bold text-sm text-navy" data-i18n="snackoItem2Title">Hallon-Lakritsmarmelad</h4>
+                <p class="text-xs text-gray-500" data-i18n="snackoItem2Desc">Husets egen pannkakstillbehör</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 flex justify-center">
+          <div class="relative w-full max-w-sm rounded-2xl overflow-hidden shadow-lg border-4 border-white bg-navy-card text-white p-6 space-y-4 text-center">
+            <div class="text-4xl">🍏</div>
+            <h3 class="font-serif text-xl font-bold text-brass" data-i18n="snackoBoxTitle">Köpa Med Hem?</h3>
+            <p class="text-xs text-gray-300 leading-relaxed" data-i18n="snackoBoxDesc">
+              Ta med en smak av Åland hem! Flaska med färsk Snäckö-must och marmelad finns att köpa direkt över disk.
+            </p>
+            <div class="pt-2">
+              <a href="https://docs.google.com/forms/d/e/1FAIpQLSc_EXAMPLE_LOLOS_RESERVATION/viewform" target="_blank" rel="noopener noreferrer" onclick="openBookingForm(event)" class="w-full bg-brass text-navy font-bold text-xs py-3 rounded-lg hover:bg-brass-light transition inline-flex items-center justify-center gap-1.5 shadow">
+                <span data-i18n="snackoBoxBtn">Boka Bord & Besök Oss ↗</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="marina" class="py-20 bg-navy-card text-white relative">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <div class="lg:col-span-6 space-y-6 reveal-element">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-brass/20 text-brass text-xs font-bold uppercase tracking-wider">
+            ⛵ <span data-i18n="marinaBadge">Gästhamn & Båtgäster</span>
+          </div>
+          <h2 class="font-serif text-3xl sm:text-4xl font-bold text-white" data-i18n="marinaTitle">
+            Lägg Till Vid Vår Egen Besöksbrygga
+          </h2>
+          <p class="text-gray-300 text-base leading-relaxed" data-i18n="marinaDesc">
+            Lolo's ligger optimalt till för båtgäster som kryssar i den norra åländska skärgården. Vår skyddade besöksbrygga erbjuder trygg tilläggning med direktanslutning till caféterrassen.
+          </p>
+
+          <ul class="space-y-3 text-sm text-gray-300">
+            <li class="flex items-center gap-3">
+              <span class="text-brass">✔</span>
+              <span data-i18n="marinaFeat1">Fri tilläggning under restaurangbesök</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-brass">✔</span>
+              <span data-i18n="marinaFeat2">Segelbåtsdjup upp till 2,5 meter</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-brass">✔</span>
+              <span data-i18n="marinaFeat3">Färskvatten & möjlighet till elpåfyllning</span>
+            </li>
+            <li class="flex items-center gap-3">
+              <span class="text-brass">✔</span>
+              <span data-i18n="marinaFeat4">Vindskyddat läge i Snäckö Sund</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="lg:col-span-6 reveal-element">
+          <div class="bg-navy p-6 rounded-2xl border border-brass/30 space-y-4">
+            <div class="flex items-center justify-between pb-4 border-b border-navy-light">
+              <span class="font-serif font-bold text-lg text-brass" data-i18n="marinaCardHead">Bryggstatus Just Nu</span>
+              <span class="text-xs bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-full font-semibold" data-i18n="marinaPill">
+                LEDIGA PLATSER FINNS
+              </span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 text-center">
+              <div class="p-4 rounded-xl bg-navy-card">
+                <div class="text-2xl font-bold text-white font-serif">15</div>
+                <div class="text-xs text-gray-400" data-i18n="marinaBox1">Gästplatser Totalt</div>
+              </div>
+              <div class="p-4 rounded-xl bg-navy-card">
+                <div class="text-2xl font-bold text-brass font-serif">60.3566° N</div>
+                <div class="text-xs text-gray-400" data-i18n="marinaBox2">19.7943° E (Geta)</div>
+              </div>
+            </div>
+
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSc_EXAMPLE_LOLOS_RESERVATION/viewform" target="_blank" rel="noopener noreferrer" onclick="openBookingForm(event)" class="w-full bg-brass text-navy font-bold py-3.5 rounded-xl text-sm hover:bg-brass-light transition flex items-center justify-center gap-2 shadow-lg">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+              <span data-i18n="marinaCta">Förreservera Båtplats (Google Form ↗)</span>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section id="contact" class="py-24 bg-mist text-navy">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <div class="text-center max-w-3xl mx-auto mb-16 space-y-3 reveal-element">
+        <span class="text-brass-dark text-xs font-bold tracking-widest uppercase" data-i18n="contactSub">Välkommen Till Snäckö</span>
+        <h2 class="font-serif text-3xl sm:text-5xl font-bold tracking-tight text-navy" data-i18n="contactTitle">
+          Hitta Hit & Kontakt
+        </h2>
+        <p class="text-gray-600 text-base" data-i18n="contactDesc">
+          Vi ser fram emot att hälsa dig välkommen! Kontakta oss för frågor eller bordsbokningar via vårt online-formulär.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Contact Details Box -->
+        <div class="lg:col-span-5 bg-white p-8 rounded-2xl shadow-md border border-mist-dark space-y-6 reveal-element">
+          <h3 class="font-serif text-2xl font-bold text-navy border-b pb-4" data-i18n="infoTitle">
+            Kontaktinformation
+          </h3>
+
+          <div class="space-y-4 text-sm text-gray-700">
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-brass/10 text-brass flex items-center justify-center shrink-0 text-lg">📍</div>
+              <div>
+                <strong class="block text-navy font-semibold" data-i18n="labelAddress">Adress</strong>
+                <span>Snäckövägen 102, 22340 Geta, Åland</span>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-brass/10 text-brass flex items-center justify-center shrink-0 text-lg">📞</div>
+              <div>
+                <strong class="block text-navy font-semibold" data-i18n="labelPhone">Telefon</strong>
+                <a href="tel:+358405477999" class="text-brass-dark hover:underline font-medium">+358 40 547 7999</a>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-brass/10 text-brass flex items-center justify-center shrink-0 text-lg">✉️</div>
+              <div>
+                <strong class="block text-navy font-semibold" data-i18n="labelEmail">E-post</strong>
+                <a href="mailto:info@lolos.ax" class="text-brass-dark hover:underline font-medium">info@lolos.ax</a>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-brass/10 text-brass flex items-center justify-center shrink-0 text-lg">🕒</div>
+              <div>
+                <strong class="block text-navy font-semibold" data-i18n="labelHours">Ordinarie Öppettider</strong>
+                <p class="text-xs text-gray-600" data-i18n="hoursDetail">Fredag – Söndag: 11:00 – 19:00<br/>Måndag – Torsdag: Stängt (eller förbokade sällskap)</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-2">
+            <a href="https://docs.google.com/forms/d/e/1FAIpQLSc_EXAMPLE_LOLOS_RESERVATION/viewform" target="_blank" rel="noopener noreferrer" onclick="openBookingForm(event)" class="w-full bg-navy text-white font-bold py-3.5 rounded-xl text-sm hover:bg-navy-light transition shadow flex items-center justify-center gap-2">
+              <span data-i18n="contactBookBtn">Boka Bord Online (Google Form ↗)</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Interactive Map Graphic Card -->
+        <div class="lg:col-span-7 bg-navy-card rounded-2xl p-8 text-white border border-brass/30 shadow-xl reveal-element flex flex-col justify-between min-h-[420px] relative overflow-hidden">
+          
+          <!-- Decorative Map Background Pattern -->
+          <div class="absolute inset-0 opacity-15 bg-[radial-gradient(#CFA162_1.5px,transparent_1.5px)] [background-size:16px_16px]"></div>
+          
+          <div class="relative z-10 space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-brass font-bold uppercase tracking-widest" data-i18n="mapHeading">Karta & Skärgårdsrutt</span>
+              <span class="text-xs text-gray-400">Geta, Åland</span>
+            </div>
+
+            <h3 class="font-serif text-2xl font-bold text-white" data-i18n="mapTitle">
+              Enkel tillgång både från land och till sjöss
+            </h3>
+
+            <p class="text-xs text-gray-300 leading-relaxed max-w-xl" data-i18n="mapDesc">
+              Lolo’s nås enkelt med bil från Mariehamn (ca 40 minuters vacker skärgårdskörning) eller direkt med båt via Snäckö Sund.
+            </p>
+          </div>
+
+          <!-- Stylized Pin Card -->
+          <div class="relative z-10 my-6 bg-navy/90 p-5 rounded-xl border border-brass/40 flex items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+              <div class="w-12 h-12 rounded-full bg-brass/20 text-brass flex items-center justify-center text-xl shrink-0">📍</div>
+              <div>
+                <div class="font-serif font-bold text-white text-base">Lolo's Seaside Café & Restaurant</div>
+                <div class="text-xs text-gray-400">Snäckövägen 102, Geta</div>
+              </div>
+            </div>
+            
+            <a href="https://www.google.com/maps/place/Lolo's+Seaside+Caf%C3%A9+%26+Restaurant/@60.3566664,19.79173,17z" target="_blank" rel="noopener" class="bg-brass hover:bg-brass-light text-navy font-bold px-4 py-2 rounded-lg text-xs transition shrink-0 whitespace-nowrap">
+              <span data-i18n="mapBtn">Öppna Google Maps ↗</span>
+            </a>
+          </div>
+
+          <div class="relative z-10 text-center text-[11px] text-gray-400 italic" data-i18n="mapFooter">
+            Fri parkering finns i direkt anslutning till caféet och båtbryggan.
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="bg-navy-deep text-gray-400 py-12 border-t border-navy-light">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+      
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div>
+          <a href="#" class="font-serif text-2xl font-bold text-white tracking-wide">
+            LOLO'S <span class="text-brass italic">Seaside</span>
+          </a>
+          <p class="text-xs text-gray-400 mt-1" data-i18n="footerTagline">
+            Lolo's Seaside Café & Restaurant • Snäckö, Geta, Åland
+          </p>
+        </div>
+
+        <div class="flex space-x-6 text-sm font-medium">
+          <a href="#about" class="hover:text-brass transition" data-i18n="navAbout">Om Oss</a>
+          <a href="#menu" class="hover:text-brass transition" data-i18n="navMenu">Meny</a>
+          <a href="#snacko" class="hover:text-brass transition" data-i18n="navSnacko">Snäckö Frukt</a>
+          <a href="#contact" class="hover:text-brass transition" data-i18n="navContact">Kontakt</a>
+        </div>
+      </div>
+
+      <div class="pt-8 border-t border-navy-light/50 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500">
+        <div>
+          &copy; 2026 Lolo's Seaside Café & Restaurant. All rights reserved.
+        </div>
+        <div class="flex items-center gap-4">
+          <span data-i18n="footerLoc">Ålands Skärgård</span>
+          <span>•</span>
+          <a href="https://lolos.ax" target="_blank" class="hover:text-brass">lolos.ax</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <script>
+
+    // Direct Google Form Booking URL Configuration
+    const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc_EXAMPLE_LOLOS_RESERVATION/viewform";
+
+    const translations = {
+      sv: {
+        // Banner & Nav
+        locationSummary: "Snäckö, Geta • Åland",
+        demoToggle: "Testa Öppet/Stängt vy",
+        navAbout: "Om Oss",
+        navMenu: "Meny",
+        navSnacko: "Snäckö Frukt",
+        navMarina: "Gästbrygga",
+        navContact: "Kontakt",
+        btnBookTable: "Boka Bord",
+        languageLabel: "Språk:",
+
+        // Hero
+        heroBadge: "Snäckö • Geta, Ålands Skärgård",
+        heroTitleLine1: "En flytande oas",
+        heroTitleLine2: "mitt på havet",
+        heroSubtitle: "Avnjut lokalt åländskt mathantverk, nypressad äppelmust från Snäckö Frukt och doften av salt hav – serverat direkt på vår flytande bryggterrass.",
+        heroCtaBook: "Boka Bord (Google Form ↗)",
+        heroCtaMenu: "Utforska Menyn",
+        stat1: "Åländskt Mathantverk",
+        stat2: "Båtplatser i Gästbryggan",
+        stat3: "Avstånd till Vattnet",
+        cardBadge: "Signaturrätt",
+        cardTitle: "Ålandspannkaka på Däck",
+        cardSub: "Med hemkokt hallon-lakritsmarmelad & färsk vispgrädde",
+        dockStatus: "Besöksbrygga Öppen",
+        waterDepth: "Djup: 2.5m",
+        heroCardQuote: '"Vår restaurang vilar direkt på vågorna. Här njuter du av doften från äppelodlingarna och den svala skärgårdsbrisen."',
+
+        // About
+        aboutSub: "Upplev Lolo's",
+        aboutTitle: "Vilar på vattnet vid Snäckö Sund",
+        aboutDesc: "Lolo’s Seaside Café & Restaurant erbjuder en unik kombination av genuint åländskt mathantverk, avslappnad atmosfär och en oslagbar placering direkt på havet i Geta.",
+        pillar1Title: "Flytande Servering",
+        pillar1Desc: "Sitt utomhus på vår rymliga däckterrass eller inne i inglasade salongen. Se båtarna lägga till samtidigt som du njuter av skärgårdens lugn.",
+        pillar2Title: "Snäckö Frukt Samarbete",
+        pillar2Desc: "I direkt anslutning till äppelodlingarna serverar vi sortren kallpressad äppelmust, hemgjorda chutneyer och lokala delikatesser.",
+        pillar3Title: "Egen Gästbrygga",
+        pillar3Desc: "Kommer du med båt? Vi har fri tilläggning för caférestaurangens gäster med gott om plats för både mindre båtar och segelbåtar.",
+
+        // Menu
+        menuSub: "Smaker Från Skärgården",
+        menuTitle: "Lolo's Meny & Delikatesser",
+        menuDesc: "Noggrant utvalda råvaror tillagade med omsorg. Alla rätter tillagas från grunden med lokala åländska smaknoter.",
+        catAll: "Alla Rätter",
+        catDishes: "Mat & Skärgårdsrätter",
+        catDrinks: "Snäckö Must & Dryck",
+        catDesserts: "Fika & Ålandspannkaka",
+        menuNote: "* Allergier eller specialkost? Meddela gärna i din bordsbokning via formuläret.",
+        menuBookLink: "Boka bord ↗",
+
+        // Snäckö
+        snackoBadge: "Lokalt Odlat På Snäckö",
+        snackoTitle: "Från Äppelodling Till Glas & Tallrik",
+        snackoText: "Mitt emot caféet breder Snäckö Frukts äppelodlingar ut sig. Här växer solmogna åländska äpplen som pressas till vår populära sortrena muster. Prova även våra hemgjorda chutneyer och sylter som finns till försäljning i caféets lilla gårdsbutikshörna.",
+        snackoItem1Title: "Sortren Äppelmust",
+        snackoItem1Desc: "Kallpressad utan tillsatt socker",
+        snackoItem2Title: "Hallon-Lakritsmarmelad",
+        snackoItem2Desc: "Husets egen pannkakstillbehör",
+        snackoBoxTitle: "Köpa Med Hem?",
+        snackoBoxDesc: "Ta med en smak av Åland hem! Flaska med färsk Snäckö-must och marmelad finns att köpa direkt över disk.",
+        snackoBoxBtn: "Boka Bord & Besök Oss ↗",
+
+        // Marina
+        marinaBadge: "Gästhamn & Båtgäster",
+        marinaTitle: "Lägg Till Vid Vår Egen Besöksbrygga",
+        marinaDesc: "Lolo's ligger optimalt till för båtgäster som kryssar i den norra åländska skärgården. Vår skyddade besöksbrygga erbjuder trygg tilläggning med direktanslutning till caféterrassen.",
+        marinaFeat1: "Fri tilläggning under restaurangbesök",
+        marinaFeat2: "Segelbåtsdjup upp till 2,5 meter",
+        marinaFeat3: "Färskvatten & möjlighet till elpåfyllning",
+        marinaFeat4: "Vindskyddat läge i Snäckö Sund",
+        marinaCardHead: "Bryggstatus Just Nu",
+        marinaPill: "LEDIGA PLATSER FINNS",
+        marinaBox1: "Gästplatser Totalt",
+        marinaBox2: "19.7943° E (Geta)",
+        marinaCta: "Förreservera Båtplats (Google Form ↗)",
+
+        // Contact
+        contactSub: "Välkommen Till Snäckö",
+        contactTitle: "Hitta Hit & Kontakt",
+        contactDesc: "Vi ser fram emot att hälsa dig välkommen! Kontakta oss för frågor eller bordsbokningar via vårt online-formulär.",
+        infoTitle: "Kontaktinformation",
+        labelAddress: "Adress",
+        labelPhone: "Telefon",
+        labelEmail: "E-post",
+        labelHours: "Ordinarie Öppettider",
+        hoursDetail: "Fredag – Söndag: 11:00 – 19:00\nMåndag – Torsdag: Stängt (eller förbokade sällskap)",
+        contactBookBtn: "Boka Bord Online (Google Form ↗)",
+        mapHeading: "Karta & Skärgårdsrutt",
+        mapTitle: "Enkel tillgång både från land och till sjöss",
+        mapDesc: "Lolo’s nås enkelt med bil från Mariehamn (ca 40 minuters vacker skärgårdskörning) eller direkt med båt via Snäckö Sund.",
+        mapBtn: "Öppna Google Maps ↗",
+        mapFooter: "Fri parkering finns i direkt anslutning till caféet och båtbryggan.",
+
+        footerTagline: "Lolo's Seaside Café & Restaurant • Snäckö, Geta, Åland",
+        footerLoc: "Ålands Skärgård"
+      },
+      fi: {
+        // Banner & Nav
+        locationSummary: "Snäckö, Geta • Ahvenanmaa",
+        demoToggle: "Testaa Avoinna/Suljettu tilamuoto",
+        navAbout: "Tarinamme",
+        navMenu: "Menu",
+        navSnacko: "Snäckö Frukt",
+        navMarina: "Vieraslaituri",
+        navContact: "Yhteystiedot",
+        btnBookTable: "Varaa Pöytä",
+        languageLabel: "Kieli:",
+
+        // Hero
+        heroBadge: "Snäckö • Geta, Ahvenanmaan Saaristo",
+        heroTitleLine1: "Kelluva keidas",
+        heroTitleLine2: "keskellä merta",
+        heroSubtitle: "Nauti paikallisesta ahvenanmaalaisesta ruokakäsityöstä, Snäckö Fruktin tuorepuristetusta omenamehusta ja meren tuoksusta suoraan kelluvalla terassillamme.",
+        heroCtaBook: "Varaa Pöytä (Google Form ↗)",
+        heroCtaMenu: "Tutustu Menuun",
+        stat1: "Ahvenanmaalaista Käsityöruokaa",
+        stat2: "Veneperäpaikkaa Laiturissa",
+        stat3: "Etäisyys Meriveteen",
+        cardBadge: "Nimikkoannos",
+        cardTitle: "Ahvenanmaan Pannukakku",
+        cardSub: "Talon vadelma-lakritsihillolla & tuoreella kermavaahdolla",
+        dockStatus: "Vieraslaituri Avoinna",
+        waterDepth: "Syvyys: 2.5m",
+        heroCardQuote: '"Ravintolamme kelluu suoraan merellä. Täällä nautit omenatarhojen tuoksusta ja leppeästä saaristotuulesta."',
+
+        // About
+        aboutSub: "Koe Lolo's",
+        aboutTitle: "Kelluu merellä Snäckö Sundissa",
+        aboutDesc: "Lolo’s Seaside Café & Restaurant yhdistää aaidon ahvenanmaalaisen ruokakulttuurin, rennon ilmapiirin ja ainutlaatuisen sijainnin meren päällä Getassa.",
+        pillar1Title: "Kelluva Ravintolaterassi",
+        pillar1Desc: "Istu tilavalla terassillamme tai lasitetussa salongissa. Seuraa veneiden saapumista nauttiessasi saariston rauhasta.",
+        pillar2Title: "Snäckö Frukt -Yhteistyö",
+        pillar2Desc: "Aivan omenatarhojen vieressä tarjoilemme kylmäpuristettua omenamehua, itsetehtyjä chutneyt-kastikkeita ja paikallisia herkkuja.",
+        pillar3Title: "Oma Vieraslaituri",
+        pillar3Desc: "Saavutko veneellä? Asiakkaillamme on ilmainen kiinnittyminen lounaan ja kahvittelun ajaksi runsaalla laituritilalla.",
+
+        // Menu
+        menuSub: "Saariston Makuja",
+        menuTitle: "Lolo's Menu & Herkut",
+        menuDesc: "Huolella valitut raaka-aineet valmistettuna rakkaudella. Kaikki annokset valmistetaan alusta asti paikallisilla makuherkuilla.",
+        catAll: "Kaikki Annokset",
+        catDishes: "Ruoka & Saaristolaisannokset",
+        catDrinks: "Snäckön Mehut & Juomat",
+        catDesserts: "Kahvila & Pannukakku",
+        menuNote: "* Allergioita tai erikoisruokavalioita? Ilmoita toiveet pöytävarauslomakkeella.",
+        menuBookLink: "Varaa pöytä ↗",
+
+        // Snäckö
+        snackoBadge: "Paikallisesti Viljelty Snäckössä",
+        snackoTitle: "Omenatarhalta Lasiin Ja Lautaselle",
+        snackoText: "Kahvilaa vastapäätä avautuvat Snäckö Fruktin laajat omenatarhat. Auringon kypsyttämät omenat puristetaan suosituiksi lajike-omenamehuiksi. Osta myös kotiin itsetehtyjä hilloja ja chutneyt-herkkuja.",
+        snackoItem1Title: "Lajike-Omenamehu",
+        snackoItem1Desc: "Kylmäpuristettu ilman lisättyä sokeria",
+        snackoItem2Title: "Vadelma-Lakritsihillo",
+        snackoItem2Desc: "Pannukakun täydellinen kumppani",
+        snackoBoxTitle: "Osta Kotiin?",
+        snackoBoxDesc: "Ota pala Ahvenanmaata mukaan! Tuoreet omenamehut ja hillot ovat ostettavissa suoraan tiskiltä.",
+        snackoBoxBtn: "Varaa Pöytä & Vieraile Meillä ↗",
+
+        // Marina
+        marinaBadge: "Vieras-Satama & Veneilijät",
+        marinaTitle: "Rantaudu Omaan Vieraslaituriimme",
+        marinaDesc: "Lolo's sijaitsee täydellisesti Pohjois-Ahvenanmaan saaristossa risteileville veneilijöille. Suojaisa laituri tarjoaa turvallisen kiinnittymisen suoralla pääsyllä terassille.",
+        marinaFeat1: "Ilmainen kiinnittyminen ravintolavierailun ajan",
+        marinaFeat2: "Purjeveneille sopiva syvyys 2,5 metriin asti",
+        marinaFeat3: "Juomavesi & sähkönlatausmahdollisuus",
+        marinaFeat4: "Tuulelta suojattu sijainti Snäckö Sundissa",
+        marinaCardHead: "Laiturin Tila Nyt",
+        marinaPill: "VAPAITA PAIKKOJA",
+        marinaBox1: "Vieraspaikkoja Yhteensä",
+        marinaBox2: "19.7943° E (Geta)",
+        marinaCta: "Ennakkovaraa Venepaikka (Google Form ↗)",
+
+        // Contact
+        contactSub: "Tervetuloa Snäcköön",
+        contactTitle: "Yhteystiedot & Sijainti",
+        contactDesc: "Odotamme innolla vierailuasi! Ota yhteyttä kysymyksissä tai pöytävarauksissa verkkolomakkeemme kautta.",
+        infoTitle: "Yhteystiedot",
+        labelAddress: "Osoite",
+        labelPhone: "Puhelin",
+        labelEmail: "Sähköposti",
+        labelHours: "Aukioloajat",
+        hoursDetail: "Perjantai – Sunnuntai: 11:00 – 19:00\nMaanantai – Torstai: Suljettu (tai tilausryhmät)",
+        contactBookBtn: "Varaa Pöytä Verkossa (Google Form ↗)",
+        mapHeading: "Kartta & Reitti",
+        mapTitle: "Helppo saapua sekä maalta että mereltä",
+        mapDesc: "Lolo'siin pääsee helposti autolla Maarianhaminasta (n. 40 min upea saaristoreitti) tai suoraan veneellä Snäckö Sundia pitkin.",
+        mapBtn: "Avaa Google Maps ↗",
+        mapFooter: "Ilmainen pysäköinti aivan kahvilan ja vieraslaiturin vieressä.",
+
+        footerTagline: "Lolo's Seaside Café & Restaurant • Snäckö, Geta, Ahvenanmaa",
+        footerLoc: "Ahvenanmaan Saaristo"
+      }
+    };
+
+    const menuItemsData = [
+      {
+        id: 1,
+        category: 'dessert',
+        title: { sv: 'Ålandspannkaka med Hallon-Lakrits', fi: 'Ahvenanmaan Pannukakku (Vadelma-Lakritsi)' },
+        desc: { sv: 'Serveras ljummen med Snäckö Frukts egna hallon-lakritsmarmelad och färsk vispgrädde.', fi: 'Tarjoillaan lämpimänä Snäckö Fruktin vadelma-lakritsihillon ja tuoreen kermavaahdon kera.' },
+        price: '9,50 €',
+        badge: { sv: 'Signatur', fi: 'Klassikko' }
+      },
+      {
+        id: 2,
+        category: 'drinks',
+        title: { sv: 'Snäckö Cold-Pressed Äppelmust', fi: 'Snäckö Kylmäpuristettu Omenamehu' },
+        desc: { sv: '100% ren, osötad äppelmust pressad på lokala Geta-äpplen tvärs över vägen.', fi: '100% puhdas, lisäaineeton omenamehu viljelty vastapäisellä äppelodlingilla.' },
+        price: '4,80 €',
+        badge: { sv: 'Lokal Must', fi: 'Lähimehu' }
+      },
+      {
+        id: 3,
+        category: 'dishes',
+        title: { sv: 'Lolo\'s Skärgårdsburgare', fi: 'Lolo\'s Saaristolaispurilainen' },
+        desc: { sv: 'Åländskt nötkött, lokal skärgårdsost, syrad rödlök, krispsallad och hemgjord dressing.', fi: 'Ahvenanmaalaista häränlihaa, saaristolaisjuustoa, pikkelöityä punasipulia ja talon kastiketta.' },
+        price: '18,50 €',
+        badge: { sv: 'Populär', fi: 'Suosittu' }
+      },
+      {
+        id: 4,
+        category: 'dishes',
+        title: { sv: 'Krämig Åländsk Laxsoppa', fi: 'Kermainen Ahvenanmaalainen Lohikeitto' },
+        desc: { sv: 'Serveras med doftande dillsmör och hembakat skärgårdsbröd.', fi: 'Tarjoillaan tillivoin ja itsetehdyn saaristolaisleivän kera.' },
+        price: '16,90 €',
+        badge: { sv: 'Färsk Lax', fi: 'Tuore Lohi' }
+      },
+      {
+        id: 5,
+        category: 'drinks',
+        title: { sv: 'Åländsk Hantverkscider / Öl', fi: 'Ahvenanmaalainen Käsityösiideri / Olut' },
+        desc: { sv: 'Urval av lokal hantverksdryck från Stallhagen och Åland Distillery.', fi: 'Valikoima paikallisia käsityöjuomia Stallhagenilta ja Åland Distilleryltä.' },
+        price: '7,50 €',
+        badge: { sv: 'Lokalt Bryggd', fi: 'Paikallinen' }
+      },
+      {
+        id: 6,
+        category: 'dessert',
+        title: { sv: 'Frasiga Våfflor med Hjortronsylt', fi: 'Rapeat Vohvelit Lakkahillolla' },
+        desc: { sv: 'Gräddas på beställning. Serveras med skärgårdens hjortronsylt och mjukglass.', fi: 'Paistetaan tilauksesta. Tarjoillaan saariston lakkahillon ja pehmiksen kera.' },
+        price: '8,90 €',
+        badge: { sv: 'Nybakat', fi: 'Tuore' }
+      }
+    ];
+
+    let currentLang = 'sv';
+    let isDemoClosed = false;
+
+    
+    // Core function to open Google Form booking directly in a new tab
+    function openBookingForm(event) {
+      if (event) {
+        event.preventDefault();
+      }
+      window.open(GOOGLE_FORM_URL, '_blank', 'noopener,noreferrer');
+    }
+
+    function switchLanguage(lang) {
+      currentLang = lang;
+      
+      // Update Language Buttons Styling
+      const btnSV = document.getElementById('langSV');
+      const btnFI = document.getElementById('langFI');
+      if (lang === 'sv') {
+        btnSV.className = 'px-3 py-1 text-xs font-semibold rounded-full transition-all duration-300 bg-brass text-navy shadow-sm';
+        btnFI.className = 'px-3 py-1 text-xs font-semibold rounded-full transition-all duration-300 text-gray-300 hover:text-white';
+      } else {
+        btnFI.className = 'px-3 py-1 text-xs font-semibold rounded-full transition-all duration-300 bg-brass text-navy shadow-sm';
+        btnSV.className = 'px-3 py-1 text-xs font-semibold rounded-full transition-all duration-300 text-gray-300 hover:text-white';
+      }
+
+      // Update text nodes with data-i18n attribute
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+          el.innerText = translations[lang][key];
+        }
+      });
+
+      // Re-evaluate live open status banner text in new language
+      updateLiveHoursBanner();
+
+      // Render menu in target language
+      renderMenu('all');
+    }
+
+    function updateLiveHoursBanner() {
+      const statusPill = document.getElementById('statusPill');
+      const statusPing = document.getElementById('statusPing');
+      const statusDot = document.getElementById('statusDot');
+      const statusText = document.getElementById('statusText');
+      const statusSubtext = document.getElementById('statusSubtext');
+
+      const now = new Date();
+      const day = now.getDay(); // 0 = Sun, 5 = Fri, 6 = Sat
+      const hour = now.getHours();
+
+      // Opening schedule: Friday(5), Saturday(6), Sunday(0) between 11:00 and 19:00
+      const isWeekendDay = (day === 0 || day === 5 || day === 6);
+      const isOpenTime = (hour >= 11 && hour < 19);
+
+      const isOpenNow = (!isDemoClosed) && (isWeekendDay && isOpenTime);
+
+      if (isOpenNow) {
+        statusPill.className = "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wide bg-emerald-500/20 text-emerald-300 border border-emerald-500/30";
+        statusPing.className = "pulse-dot-ring absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75";
+        statusDot.className = "relative inline-flex rounded-full h-2 w-2 bg-emerald-400";
+        statusText.innerText = currentLang === 'sv' ? "ÖPPET NU" : "AVOINNA NYT";
+        statusSubtext.innerText = currentLang === 'sv' 
+          ? "Idag öppet 11:00 – 19:00 • Köket stänger kl. 18:30" 
+          : "Tänään avoinna 11:00 – 19:00 • Keittiö sulkeutuu klo 18:30";
+      } else {
+        statusPill.className = "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold tracking-wide bg-amber-500/20 text-amber-300 border border-amber-500/30";
+        statusPing.className = "hidden";
+        statusDot.className = "relative inline-flex rounded-full h-2 w-2 bg-amber-400";
+        statusText.innerText = currentLang === 'sv' ? "STÄNGT JUST NU" : "SULJETTU TÄLLÄ HETKELLÄ";
+        statusSubtext.innerText = currentLang === 'sv' 
+          ? "Nästa öppettid: Fredag kl. 11:00 (Bordsbokning öppen online via Google Form)" 
+          : "Seuraava aukiolo: Perjantaina klo 11:00 (Pöytävaraus avoinna Google Formsin kautta)";
+      }
+    }
+
+    function toggleDemoStatus() {
+      isDemoClosed = !isDemoClosed;
+      updateLiveHoursBanner();
+    }
+
+    function renderMenu(category = 'all') {
+      const grid = document.getElementById('menuGrid');
+      grid.innerHTML = '';
+
+      const filtered = category === 'all' 
+        ? menuItemsData 
+        : menuItemsData.filter(item => item.category === category);
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-navy-card p-6 rounded-2xl border border-gray-800 hover:border-brass/40 transition-all duration-300 flex flex-col justify-between space-y-4 group";
+        
+        card.innerHTML = `
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[10px] bg-brass/15 text-brass border border-brass/30 px-2.5 py-0.5 rounded font-bold uppercase tracking-wider">
+                ${item.badge[currentLang]}
+              </span>
+              <span class="font-serif font-bold text-brass text-lg">${item.price}</span>
+            </div>
+            <h3 class="font-serif text-xl font-bold text-white group-hover:text-brass transition-colors">
+              ${item.title[currentLang]}
+            </h3>
+            <p class="text-xs text-gray-400 leading-relaxed">
+              ${item.desc[currentLang]}
+            </p>
+          </div>
+          <div class="pt-2 border-t border-navy-light flex items-center justify-between text-[11px] text-gray-400">
+            <span>Åländskt mathantverk</span>
+            <a href="${GOOGLE_FORM_URL}" target="_blank" rel="noopener noreferrer" onclick="openBookingForm(event)" class="text-brass hover:underline font-semibold">
+              ${translations[currentLang].menuBookLink}
+            </a>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function filterMenu(cat) {
+      document.querySelectorAll('.menu-tab-btn').forEach(btn => {
+        btn.className = "menu-tab-btn px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-navy-card text-gray-300 hover:text-white border border-gray-800";
+      });
+      const activeBtn = document.getElementById(`tab-${cat}`);
+      if (activeBtn) {
+        activeBtn.className = "menu-tab-btn active px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all bg-brass text-navy shadow-md";
+      }
+      renderMenu(cat);
+    }
+
+    function toggleMobileMenu() {
+      const drawer = document.getElementById('mobileDrawer');
+      drawer.classList.toggle('hidden');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Initialize language & menu rendering
+      switchLanguage('sv');
+
+      // Scroll Reveal Observer setup
+      const observerOptions = {
+        root: null,
+        threshold: 0.12
+      };
+
+      const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+          }
+        });
+      }, observerOptions);
+
+      document.querySelectorAll('.reveal-element').forEach(el => {
+        revealObserver.observe(el);
+      });
+    });
+  </script>
+</body>
+</html>
