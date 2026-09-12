@@ -1,0 +1,44 @@
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #0F1C24;
+}
+::-webkit-scrollbar-thumb {
+    background: #CFA162;
+    border-radius: 4px;
+}
+
+/* Glassmorphism */
+.glass-dark {
+    background: rgba(15, 28, 36, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(207, 161, 98, 0.15);
+}
+
+/* Scroll Reveal Animations */
+.reveal-element {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-element.revealed {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Pulsing Status Dot */
+@keyframes pulse-ring {
+    0% { transform: scale(0.95); opacity: 0.8; }
+    50% { transform: scale(1.3); opacity: 0.2; }
+    100% { transform: scale(0.95); opacity: 0.8; }
+}
+.pulse-dot-ring {
+    animation: pulse-ring 2s infinite ease-in-out;
+}
+
+/* Wave Gradient Background */
+.sea-gradient {
+    background: linear-gradient(180deg, #0A131A 0%, #0F1C24 40%, #16242F 100%);
+}
